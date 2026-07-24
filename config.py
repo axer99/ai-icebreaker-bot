@@ -5,8 +5,8 @@ WATSONX_URL = "https://us-south.ml.cloud.ibm.com"
 WATSONX_PROJECT_ID = "skills-network"
 
 # Model settings
-LLM_MODEL_ID = "ibm/granite-3-2-8b-instruct"
-EMBEDDING_MODEL_ID = "ibm/slate-125m-english-rtrvr"
+LLM_MODEL_ID = "ibm/granite-4-h-small"
+EMBEDDING_MODEL_ID = "ibm/slate-125m-english-rtrvr-v2"
 
 # ProxyCurl API settings
 PROXYCURL_API_KEY = ""  # Replace with your API key
@@ -15,7 +15,7 @@ PROXYCURL_API_KEY = ""  # Replace with your API key
 MOCK_DATA_URL = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/ZRe59Y_NJyn3hZgnF1iFYA/linkedin-profile-data.json"
 
 # Query settings
-SIMILARITY_TOP_K = 5
+SIMILARITY_TOP_K = 7
 TEMPERATURE = 0.0
 MAX_NEW_TOKENS = 500
 MIN_NEW_TOKENS = 1
@@ -23,7 +23,7 @@ TOP_K = 50
 TOP_P = 1
 
 # Node settings
-CHUNK_SIZE = 500
+CHUNK_SIZE = 400
 
 # LLM prompt templates
 INITIAL_FACTS_TEMPLATE = """
