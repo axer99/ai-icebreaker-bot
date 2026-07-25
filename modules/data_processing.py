@@ -47,12 +47,18 @@ def create_vector_database(nodes: List) -> Optional[VectorStoreIndex]:
     Returns:
         VectorStoreIndex or None if indexing fails.
     """
-    # TODO: Implement this function to create a vector database
-    # 1. Get the embedding model using create_watsonx_embedding()
-    # 2. Create a VectorStoreIndex from the nodes
-    # 3. Return the index
-    
-    return None  # Replace with your implementation
+    try:
+        # Get the watsonx embedding model
+        embed_model = create_watsonx_embedding()
+
+        # Build a vector store index from the nodes, embedding each one
+        index = VectorStoreIndex(nodes, embed_model=embed_model)
+
+        logger.info(f"Created vector database with {len(nodes)} nodes")
+        return index
+    except Exception as e:
+        logger.error(f"Error in create_vector_database: {e}")
+        return None
 
 def verify_embeddings(index: VectorStoreIndex) -> bool:
     """Verify that all nodes have been properly embedded.
@@ -63,10 +69,22 @@ def verify_embeddings(index: VectorStoreIndex) -> bool:
     Returns:
         True if all embeddings are valid, False otherwise.
     """
-    # TODO: Implement this function to verify embeddings
-    # 1. Get the vector store from the index
-    # 2. Get the node IDs from the index
-    # 3. Check if each node has a valid embedding
-    # 4. Return True if all embeddings are valid, False otherwise
-    
-    return False  # Replace with your implementation
+    try:
+        vector_store = index.vector_store
+        node_ids = list(index.index_struct.nodes_dict.values())
+
+        if not node_ids:
+            logger.warning("No nodes found in the index")
+            return False
+
+        for node_id in node_ids:
+            embedding = vector_store.get(node_id)
+            if not embedding:
+                logger.warning(f"Node {node_id} is missing an embedding")
+                return False
+
+        logger.info(f"Verified embeddings for {len(node_ids)} nodes")
+        return True
+    except Exception as e:
+        logger.error(f"Error in verify_embeddings: {e}")
+        return False

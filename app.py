@@ -32,7 +32,7 @@ def process_profile(linkedin_url, api_key, use_mock, selected_model):
     
     Args:
         linkedin_url: LinkedIn profile URL to process.
-        api_key: ProxyCurl API key.
+        api_key: LinkdAPI key.
         use_mock: Whether to use mock data.
         selected_model: LLM model to use.
         
@@ -145,10 +145,10 @@ def create_gradio_interface():
                         placeholder="https://www.linkedin.com/in/username/"
                     )
                     api_key = gr.Textbox(
-                        label="ProxyCurl API Key (Leave empty to use mock data)",
-                        placeholder="Your ProxyCurl API Key",
+                        label="LinkdAPI Key (Leave empty to use mock data)",
+                        placeholder="Your LinkdAPI Key",
                         type="password",
-                        value=config.PROXYCURL_API_KEY
+                        value=config.LINKDAPI_API_KEY
                     )
                     use_mock = gr.Checkbox(label="Use Mock Data", value=True)
                     model_dropdown = gr.Dropdown(

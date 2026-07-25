@@ -1,17 +1,19 @@
 """Configuration settings for the Icebreaker Bot."""
 
+import os
+
 # IBM watsonx.ai settings
 WATSONX_URL = "https://us-south.ml.cloud.ibm.com"
-WATSONX_PROJECT_ID = "skills-network"
+WATSONX_PROJECT_ID = os.getenv("WATSONX_PROJECT_ID", "your_project_id_here")
 
 # Model settings
 LLM_MODEL_ID = "ibm/granite-4-h-small"
 EMBEDDING_MODEL_ID = "ibm/slate-125m-english-rtrvr-v2"
 
-# ProxyCurl API settings
-PROXYCURL_API_KEY = ""  # Replace with your API key
+# LinkdAPI settings (used for live LinkedIn profile lookups; optional, mock data works without it)
+LINKDAPI_API_KEY = os.getenv("LINKDAPI_API_KEY", "")
 
-# Mock data URL
+# Mock data URL (sample LinkedIn-style profile, used when no live API key is provided)
 MOCK_DATA_URL = "https://cf-courses-data.s3.us.cloud-object-storage.appdomain.cloud/ZRe59Y_NJyn3hZgnF1iFYA/linkedin-profile-data.json"
 
 # Query settings

@@ -1,20 +1,18 @@
 # LinkedIn Icebreaker Bot
 
-An AI-powered tool that generates personalized icebreakers and conversation starters based on LinkedIn profiles. This project uses IBM watsonx.ai and LlamaIndex to create a tool that helps make introductions more personal and engaging.
+An AI-powered tool that generates personalized icebreakers and conversation starters based on LinkedIn profiles, built with IBM watsonx.ai and LlamaIndex as a hands-on RAG (Retrieval-Augmented Generation) project.
 
 ## Project Overview
 
-Imagine you're heading to a big networking event, surrounded by potential employers and industry leaders. You want to make a great first impression, but you're struggling to come up with more than the usual, "What do you do?"
-
-This AI icebreaker bot does the research for you. You input a name, and within seconds, the bot searches LinkedIn, generating personalized icebreakers based on someone's career highlights, interests, and even fun facts.
+Imagine you're heading to a networking event and want to open with something better than "So, what do you do?" This bot does the research for you: give it a LinkedIn profile (or use the built-in mock data), and within seconds it generates personalized icebreakers based on that person's career highlights, skills, and background — then lets you ask follow-up questions about the profile.
 
 ## Features
 
-- Extract LinkedIn profile data using ProxyCurl API or mock data
-- Process and index the data using LlamaIndex and IBM watsonx embeddings
-- Generate interesting facts about a person's career or education
-- Answer specific questions about the LinkedIn profile
-- Interact with the bot through a command-line interface or a Gradio web UI
+- Extract LinkedIn-style profile data via [LinkdAPI](https://linkdapi.com) or built-in mock data (no API key needed for testing)
+- Chunk and index profile data using LlamaIndex, embedded with IBM watsonx embeddings
+- Generate interesting facts about a person's career or education using a RAG pipeline
+- Answer follow-up questions about the profile, grounded in the retrieved context
+- Two interfaces: a command-line tool and a Gradio web UI
 
 ## Project Structure
 
@@ -24,12 +22,12 @@ icebreaker_bot/
 ├── config.py                  # Configuration settings
 ├── modules/
 │   ├── __init__.py
-│   ├── data_extraction.py     # LinkedIn profile data extraction
-│   ├── data_processing.py     # Data splitting and indexing
-│   ├── llm_interface.py       # LLM setup and interaction
+│   ├── data_extraction.py     # LinkedIn profile data extraction (LinkdAPI or mock data)
+│   ├── data_processing.py     # Chunking and vector indexing
+│   ├── llm_interface.py       # watsonx LLM and embedding setup
 │   └── query_engine.py        # Query processing and response generation
-├── app.py                     # Gradio interface
-└── main.py                    # Main script to run without Gradio
+├── app.py                     # Gradio web interface
+└── main.py                    # CLI entry point
 ```
 
 ## Getting Started
@@ -37,14 +35,15 @@ icebreaker_bot/
 ### Prerequisites
 
 - Python 3.11+
-- A ProxyCurl API key (optional - you can use mock data)
+- An IBM watsonx.ai account and project ID
+- A [LinkdAPI](https://linkdapi.com) key (optional — mock data works out of the box without one)
 
 ### Installation
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/HaileyTQuach/icebreaker.git
-cd icebreaker
+git clone https://github.com/axer99/ai-icebreaker-bot.git
+cd ai-icebreaker-bot
 ```
 
 2. Create a virtual environment:
@@ -58,63 +57,43 @@ source venv/bin/activate  # On Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Add your ProxyCurl API key to `config.py` (optional)
+4. Set your credentials as environment variables:
+```bash
+export WATSONX_PROJECT_ID="your_watsonx_project_id"
+export LINKDAPI_API_KEY="your_linkdapi_key"  # optional, only needed for live profile lookups
+```
 
 ### Usage
 
 #### Command Line Interface
 
-Run the bot using the command line:
-
 ```bash
 python main.py --mock  # Use mock data
 # OR
-python main.py --url "https://www.linkedin.com/in/username/" --api-key "your-api-key"
+python main.py --url "https://www.linkedin.com/in/username/" --api-key "your-linkdapi-key"
 ```
 
 #### Web Interface
-
-Launch the Gradio web interface:
 
 ```bash
 python app.py
 ```
 
-Then open your browser to the URL shown in the terminal (typically http://127.0.0.1:7860).
+Then open your browser to the URL shown in the terminal (typically `http://127.0.0.1:7860`).
 
-## Development Tasks
+## How It Works
 
-This is a starter template with placeholder functions. Your task is to implement the following components:
+This is a small end-to-end RAG pipeline:
 
-1. In `config.py`:
-   - Define the prompt templates for facts generation and question answering
+1. **Extract** — pull profile data (mock or live via LinkdAPI)
+2. **Chunk** — split the profile JSON into smaller nodes with LlamaIndex's `SentenceSplitter`
+3. **Embed & store** — embed each chunk with an IBM watsonx embedding model and index it in a `VectorStoreIndex`
+4. **Retrieve & generate** — for each question, retrieve the most relevant chunks and pass them to a watsonx LLM (Granite by default) to generate a grounded answer
 
-2. In `modules/data_extraction.py`:
-   - Implement the `extract_linkedin_profile` function
+## Notes
 
-3. In `modules/data_processing.py`:
-   - Implement the `split_profile_data` function
-   - Implement the `create_vector_database` function
-   - Implement the `verify_embeddings` function
-
-4. In `modules/llm_interface.py`:
-   - Implement the `create_watsonx_embedding` function
-   - Implement the `create_watsonx_llm` function
-   - Implement the `change_llm_model` function
-
-5. In `modules/query_engine.py`:
-   - Implement the `generate_initial_facts` function
-   - Implement the `answer_user_query` function
-
-6. Update `modules/__init__.py` to import your implemented functions
-
-7. In `main.py`:
-   - Implement the `process_linkedin` function
-   - Implement the `chatbot_interface` function
-
-8. In `app.py`:
-   - Implement the `process_profile` function
-   - Implement the `chat_with_profile` function
+- The mock data option uses a sample LinkedIn-style profile, so you can try the whole pipeline without any API key.
+- LinkdAPI is used here as the live data source (LinkedIn's original scraping API this project used, ProxyCurl, was discontinued in 2025). If you swap in a different provider, the only file you need to touch is `modules/data_extraction.py`.
 
 ## License
 
@@ -122,6 +101,6 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgments
 
-- IBM watsonx.ai for providing the LLM and embedding models
+- IBM watsonx.ai for the LLM and embedding models
 - LlamaIndex for the data indexing and retrieval framework
-- ProxyCurl for LinkedIn profile data extraction
+- LinkdAPI for LinkedIn profile data extraction
